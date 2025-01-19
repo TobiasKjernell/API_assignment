@@ -6,13 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/fonts/font.css">
     <script src="js/script.js" defer></script>
     <title>Pokemon Viewer</title>
 </head>
 
 <body>
     <header class="header">
-        <img src="" alt="" class="header__logo">
+        <div class="logo__container">
+            <img src="img/pokeball.png" alt="pokemonball logo" class="header__logo" height="35px" width="auto">
+            <h1 class="header__title">Pokémon Viewer</h1>
+        </div>
         <div class="search">
             <div class="search-container">
                 <input type="text" class="search__input" placeholder="Pokémon name or ID (1025 Limit)">
@@ -34,9 +38,14 @@
                     <div class="information-grid">
                     </div>
                 </div>
+                <div class="card__shiny-container">
+                    <h2 class="shiny__title">Shiny Version</h2>
+                    <div class="card__shiny-container--img">
+                    </div>
+                </div>
             </div>
             <div class="card__visual--info">
-                <div class="img__container">    
+                <div class="img__container">
                 </div>
                 <div class="area__location">
                     <div class="grid__title">Can be found in:</div>

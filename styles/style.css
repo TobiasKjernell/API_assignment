@@ -7,6 +7,7 @@
 html {
     height: 100vh;
     font-size: 62.5%;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 body {
@@ -20,7 +21,18 @@ body {
     border-bottom: 1px solid var(--outline);
     padding: 3rem;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
+}
+
+.header__title {
+    color: var(--standard-text);
+    font-size: 3rem;
+    flex: 1;
+    padding-left: 2rem;
+}
+
+.logo__container {
+    display: flex;
 }
 
 .search {
@@ -30,6 +42,7 @@ body {
 .search-container {
     display: flex;
     position: relative;
+    flex: 1;
 
     .search__list {
         position: absolute;
@@ -252,7 +265,30 @@ body {
     margin-left: auto;
 }
 
-.error__info{
+.error__info {
     font-size: 5rem;
     color: var(--standard-text);
+}
+
+.card__shiny-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding-top: 3rem;
+
+    h2 {
+        color: var(--standard-text);
+        border-bottom: 1px solid var(--outline);
+        font-size: 2rem;
+    }
+}
+
+.card__shiny--img{
+    width: 200px;
+    height: auto;
+}
+
+.card__shiny-container--img {
+    border: 1px solid var(--outline);
+
 }

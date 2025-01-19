@@ -1,0 +1,102 @@
+Torsdag
+16 jan
+Hi Everyone!
+
+
+
+Three things:
+
+
+
+As promised / threatened I have added a new requirement for a VG grade for Assignment 6 - using localStorage
+Something is going wrong with Teams & SharePoint which is where I store all class materials such as lectures and slides. It looks like you cannot access them at the moment. We are looking into it so please be patient.
+Tomorrow and next week - as discussed we have no lectures. I am available for anything, so don't hesitate to contact me.
+
+
+Assignment 6 - Webpage connecting to an API
+
+
+In this assignment we will create a webpage loaded with AJAX data returned from an API.
+
+
+
+This is to test your knowledge of JSON objects, AJAX, working with APIs and html/css/js. Vanilla JS, jQuery or both can be used to complete the assignment.
+
+
+
+The choice of API is up to you but please keep in mind any keys you might need. You can use XHR or fetch to access the data.
+
+
+
+The page needs to have at least one event that triggers the initial API call. This could be a 'start' button, or a 'search' field with a submit button or something similar. On firing the event an AJAX request is made to an API and data is returned. The data must be a JSON object and not a simple string.
+
+
+
+The data that is returned from the call must be dynamically displayed on the page. You can populate pre-existing elements or dynamically create elements.
+
+
+
+The specifications will depend somewhat on your choice of API.
+
+
+
+Submit both a github pages link and a link to the repo.
+
+
+
+To achieve a Godkänt grade you must:
+
+
+
+Connect to an API in a user fired event
+
+
+
+Make a request for data
+
+
+
+Handle the returned data in an efficient manner
+
+
+
+Display more than one property of the returned data on the page
+
+
+
+The page must be responsive
+
+
+
+To achieve a Välgodkänt grade you must complete the above and:
+
+
+
+Have correct error handling when fetching the data
+
+
+
+Append arguments to the request
+
+
+
+Multiple calls to the API - eg have a input field that will generate different arguments and a button that fires the request
+
+
+
+Semantic code
+
+
+
+A consistent code style
+
+
+Submission
+
+
+
+A link to the repo
+
+
+
+A link to the site on guithub pages or the like

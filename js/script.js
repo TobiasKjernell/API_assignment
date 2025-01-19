@@ -1,4 +1,4 @@
-const ENDPOINT = "https://pokeapi.co/api/v2/pokemon/";
+"use strict"
 const statsGrid_el = document.querySelector('.stats-grid');
 const infoGrid_el = document.querySelector('.information-grid')
 const searchList_el = document.querySelector('.search__list');
@@ -10,7 +10,8 @@ const locationParent_el = document.querySelector('.area__location')
 const footer_el = document.querySelector('.footer');
 const card_el = document.querySelector('.card');
 const errorInfo_el = document.querySelector('.error__info');
-const numberCheck = /^\d/;
+const shinyImgParent = document.querySelector('.card__shiny-container--img');
+const NUMBERCHECK = /^\d/;
 const pokemonDic = new Map();
 let cachedPokemons = "";
 let currentSearchList = [];
@@ -24,7 +25,7 @@ let currentPokemon = "";
 const addToGrid = (statsValue, statsType, grid, positionInsert) => {
     let letterFix = upperCaseHelper(statsType);
     let letterFixNumber = statsType;
-    if (!numberCheck.test(statsValue)) {
+    if (!NUMBERCHECK.test(statsValue)) {
         letterFixNumber = upperCaseHelper(statsValue);
         statsValue = letterFixNumber;
     }
@@ -37,14 +38,14 @@ const addToGrid = (statsValue, statsType, grid, positionInsert) => {
     )
 }
 
-const addImgAndName = (response, positionInsert) => {
-    imgAndNameParent_el.textContent = "";
-    imgAndNameParent_el.insertAdjacentHTML(positionInsert, `<div class="pokemon__name">${upperCaseHelper(response.name)}</div>
-    <img src="${response.sprites.front_default}" alt="" class="card__img" height="200px" width="200px">`)
-}
 
 const addRightInfo = (response, location) => {
-    addImgAndName(response, 'afterbegin')
+
+    imgAndNameParent_el.textContent = "";
+    imgAndNameParent_el.insertAdjacentHTML('beforeend', `<div class="pokemon__name">${upperCaseHelper(response.name)}</div>
+    <img src="${response.sprites.front_default}" alt="åicture of the pokemon: ${response.name}" class="card__img" height="200px" width="200px">`)
+
+
     locationParent_el.textContent = "";
     locationParent_el.insertAdjacentHTML('beforeend', '<div class="grid__title">Can be found in:</div>');
 
@@ -62,21 +63,10 @@ const addRightInfo = (response, location) => {
     });
 }
 
-const setErrorInfo = (message, state) => {
-    if (state) {
-        card_el.classList.add("hidden");
-        errorInfo_el.classList.remove('hidden');
-        errorInfo_el.textContent = message;
-    }
-    else {
-        card_el.classList.remove("hidden");
-        errorInfo_el.classList.add('hidden');
-    }
-
-}
-
 const addLeftInfo = (responseData) => {
     infoGrid_el.textContent = "";
+    statsGrid_el.textContent = "";
+
     addToGrid(responseData.id, "ID", infoGrid_el, 'beforeend')
     addToGrid(responseData.weight, "weight", infoGrid_el, 'beforeend');
     addToGrid(responseData.height, "height", infoGrid_el, 'beforeend');
@@ -96,6 +86,26 @@ const addLeftInfo = (responseData) => {
         addToGrid(statsData.base_stat, statsData.stat.name, statsGrid_el, 'beforeend');
     });
 
+    shinyImgParent.textContent = "";
+    shinyImgParent.insertAdjacentHTML('beforeend', `      <img class="card__shiny--img"
+                            src="${responseData.sprites.front_shiny ?? ""}"
+                            alt="">
+                        <img class="card__shiny--img"
+                            src="${responseData.sprites.back_shiny ?? ""}"
+                            alt="">`)
+
+}
+
+const setErrorInfo = (message, state) => {
+    if (state) {
+        card_el.classList.add("hidden");
+        errorInfo_el.classList.remove('hidden');
+        errorInfo_el.textContent = message;
+    }
+    else {
+        card_el.classList.remove("hidden");
+        errorInfo_el.classList.add('hidden');
+    }
 }
 
 const promiseHelper = (url, errorMsg = 'Something went wrong in api search') => {
@@ -107,14 +117,19 @@ const promiseHelper = (url, errorMsg = 'Something went wrong in api search') => 
     })
 }
 
+const upperCaseHelper = value => {
+    return value[0].toUpperCase() + value.slice(1);
+}
+
 const getPokemon = async (id) => {
     try {
         searchInputBtn_el.textContent = "...";
-        statsGrid_el.textContent = "";
+      
         setErrorInfo("", false);
+
         //Pararell because i like when all card-info comes together and throws error if something happens.
         let [pokemonInfo, locationInfo] = await Promise.all([
-            promiseHelper(ENDPOINT + id, 'Pokemon search went wrong'),
+            promiseHelper(`https://pokeapi.co/api/v2/pokemon/${id}/`, 'Pokemon search went wrong'),
             promiseHelper(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, 'Location search went wrong')
         ]);
 
@@ -131,11 +146,11 @@ const getPokemon = async (id) => {
 const mapValuesSearch = (map, val) => [...map.values()].includes(val)
 
 //Store/Cache once
-const getAllPokemons = async () => {
+const getAllPokemonsNameAndID = async () => {
 
     try {
         let allPokemons = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
-        overResult = await allPokemons.json();
+        let overResult = await allPokemons.json();
 
         let ids = overResult.results.map(element => element.url.slice(element.url[element.url.length - 1], -1).split('/').pop());
         cachedPokemons = overResult.results.map(element => element.name);
@@ -156,13 +171,9 @@ const setupFooter = () => {
     footer_el.children.item(0).textContent = `Made by Tobias Kjernell, ${year.getFullYear()}`;
 }
 
-const upperCaseHelper = value => {
-    return value[0].toUpperCase() + value.slice(1);
-}
-
 const searchWrap = (search) => {
-    if(searchInput_el.value.toLowerCase() === currentPokemon.toLowerCase()) return;
-   
+    if (searchInput_el.value.toLowerCase() === currentPokemon.toLowerCase()) return;
+
     getPokemon(search);
     searchInput_el.value = upperCaseHelper(search)
     searchList_el.textContent = "";
@@ -190,6 +201,9 @@ const setupSearchAndEvents = () => {
         searchWrap(searchValue);
 
     })
+
+    //Input filtering
+    searchInput_el.addEventListener('input', () => inputFiltering());
 
     //Search Button
     searchInputBtn_el.addEventListener('click', (e) => {
@@ -249,8 +263,8 @@ const createSearchItem = (id, pokemonName) => {
 const Init = () => {
     setupFooter();
     setupSearchAndEvents();
-    getAllPokemons();
-    getPokemon("goomy");
+    getAllPokemonsNameAndID();
+    getPokemon("nosepass");
 }
 
 const inputFiltering = () => {
@@ -262,7 +276,7 @@ const inputFiltering = () => {
     if (filterValue.length === 0) return;
 
     currentHighlight = 0;
-    if (!numberCheck.test(filterValue)) {
+    if (!NUMBERCHECK.test(filterValue)) {
 
         for (let index = 0; index < amountOfSearchItems; index++) {
             for (const item of pokemonDic.keys()) {
@@ -275,7 +289,7 @@ const inputFiltering = () => {
             }
         }
 
-    } else if (numberCheck.test(filterValue)) {
+    } else if (NUMBERCHECK.test(filterValue)) {
         const text = searchInput_el.value.toLowerCase().trim();
 
         if (pokemonDic.get(pokeList[text - 1]) && !currentSearchList.includes(text)) {
@@ -287,7 +301,7 @@ const inputFiltering = () => {
     }
 }
 
-searchInput_el.addEventListener('input', () => inputFiltering());
+
 
 Init();
 
