@@ -45,11 +45,18 @@ const addRightInfo = (response, location) => {
     addImgAndName(response, 'afterbegin')
     locationParent_el.textContent = "";
     locationParent_el.insertAdjacentHTML('beforeend', '<div class="grid__title">Can be found in:</div>');
+
+    if (location.length === 0) {
+          locationParent_el.insertAdjacentHTML('beforeend', ` <div class="location__container"><div class="location__name">Upgraded Pokémon! Search for lowest version!</div>`);
+                       
+        return;
+    }
     location.forEach(zone => {
-        locationParent_el.insertAdjacentHTML('beforeend', `    <div class="location__container"><div class="location__name">${upperCaseHelper(zone.location_area.name)}</div>
+        locationParent_el.insertAdjacentHTML('beforeend', ` <div class="location__container"><div class="location__name">${upperCaseHelper(zone.location_area.name)}</div>
                             <div class="location__level-container">
                                 <div class="location__method">Method: ${upperCaseHelper(zone.version_details[0].encounter_details[0].method.name)}</div>
-                                <div class="location__level--min-max">Level ${zone.version_details[0].encounter_details[0].min_level}-${zone.version_details[0].encounter_details[0].max_level}</div></div>`)
+                                <div class="location__level--min-max">Level ${zone.version_details[0].encounter_details[0].min_level}-${zone.version_details[0].encounter_details[0].max_level}</div>
+                                </div>`)
     });
 }
 
@@ -99,6 +106,7 @@ const getPokemon = async (id) => {
 
 const mapValuesSearch = (map, val) => [...map.values()].includes(val)
 
+//Store/Cache once
 const getAllPokemons = async () => {
     let allPokemons = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
     overResult = await allPokemons.json();
@@ -142,6 +150,7 @@ const searchChecks = () => {
 
 const setupSearchAndEvents = () => {
 
+    //Delegate hierarchy
     searchList_el.addEventListener('click', (e) => {
         const clicked = e.target.closest(".search__item");
 
@@ -152,16 +161,19 @@ const setupSearchAndEvents = () => {
 
     })
 
+    //Search Button
     searchInputBtn_el.addEventListener('click', (e) => {
         e.preventDefault();
         searchChecks();
     })
 
+    //Enter
     window.addEventListener('keydown', (e) => {
         if (e.code === "Enter" && searchInput_el.value !== "")
             searchChecks();
     })
 
+    //ArrowDown
     window.addEventListener('keydown', (e) => {
         if (e.code === "ArrowDown" && searchList_el.childElementCount > 0) {
             e.preventDefault();
@@ -177,6 +189,7 @@ const setupSearchAndEvents = () => {
         }
     })
 
+    //ArrowUp
     window.addEventListener('keydown', (e) => {
         if (e.code === "ArrowUp" && searchList_el.childElementCount > 0) {
             --currentHighlight;
