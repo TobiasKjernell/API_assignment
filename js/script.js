@@ -8,6 +8,8 @@ const searchInputBtn_el = document.querySelector('.search__btn');
 const imgAndNameParent_el = document.querySelector('.img__container');
 const locationParent_el = document.querySelector('.area__location')
 const footer_el = document.querySelector('.footer');
+const card_el = document.querySelector('.card');
+const errorInfo_el = document.querySelector('.error__info');
 const numberCheck = /^\d/;
 const pokemonDic = new Map();
 let cachedPokemons = "";
@@ -17,6 +19,7 @@ let pokeList = [];
 let currentHighlight = 0;
 let previousHightlight = 0;
 let skip = false;
+let currentPokemon = "";
 
 const addToGrid = (statsValue, statsType, grid, positionInsert) => {
     let letterFix = upperCaseHelper(statsType);
@@ -37,7 +40,7 @@ const addToGrid = (statsValue, statsType, grid, positionInsert) => {
 const addImgAndName = (response, positionInsert) => {
     imgAndNameParent_el.textContent = "";
     imgAndNameParent_el.insertAdjacentHTML(positionInsert, `<div class="pokemon__name">${upperCaseHelper(response.name)}</div>
-    <img src="${response.sprites.front_default}" alt="" class="card__img" height="auto" width="200px">`)
+    <img src="${response.sprites.front_default}" alt="" class="card__img" height="200px" width="200px">`)
 }
 
 const addRightInfo = (response, location) => {
@@ -57,6 +60,19 @@ const addRightInfo = (response, location) => {
                                 <div class="location__level--min-max">Level ${zone.version_details[0].encounter_details[0].min_level}-${zone.version_details[0].encounter_details[0].max_level}</div>
                                 </div>`)
     });
+}
+
+const setErrorInfo = (message, state) => {
+    if (state) {
+        card_el.classList.add("hidden");
+        errorInfo_el.classList.remove('hidden');
+        errorInfo_el.textContent = message;
+    }
+    else {
+        card_el.classList.remove("hidden");
+        errorInfo_el.classList.add('hidden');
+    }
+
 }
 
 const addLeftInfo = (responseData) => {
@@ -84,8 +100,9 @@ const addLeftInfo = (responseData) => {
 
 const promiseHelper = (url, errorMsg = 'Something went wrong in api search') => {
     return fetch(url).then(response => {
-        if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
-
+        if (!response.ok) {
+            throw new Error(`${errorMsg} (${response.status})`);
+        }
         return response.json();
     })
 }
@@ -93,24 +110,21 @@ const promiseHelper = (url, errorMsg = 'Something went wrong in api search') => 
 const getPokemon = async (id) => {
     try {
         searchInputBtn_el.textContent = "...";
-
+        statsGrid_el.textContent = "";
+        setErrorInfo("", false);
         //Pararell because i like when all card-info comes together and throws error if something happens.
         let [pokemonInfo, locationInfo] = await Promise.all([
             promiseHelper(ENDPOINT + id, 'Pokemon search went wrong'),
             promiseHelper(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, 'Location search went wrong')
-
         ]);
-        
-    
-        statsGrid_el.textContent = "";
-  
 
+        console.log(pokemonInfo);
         addLeftInfo(pokemonInfo);
         addRightInfo(pokemonInfo, locationInfo);
         searchInputBtn_el.textContent = "Search";
 
     } catch (err) {
-        console.log(err);
+        setErrorInfo(err.message, true);
     }
 }
 
@@ -118,17 +132,23 @@ const mapValuesSearch = (map, val) => [...map.values()].includes(val)
 
 //Store/Cache once
 const getAllPokemons = async () => {
-    let allPokemons = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
-    overResult = await allPokemons.json();
 
-    let ids = overResult.results.map(element => element.url.slice(element.url[element.url.length - 1], -1).split('/').pop());
-    cachedPokemons = overResult.results.map(element => element.name);
+    try {
+        let allPokemons = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
+        overResult = await allPokemons.json();
 
-    ids.forEach((pokemon, i) => {
-        pokemonDic.set(cachedPokemons[i], pokemon)
-    })
+        let ids = overResult.results.map(element => element.url.slice(element.url[element.url.length - 1], -1).split('/').pop());
+        cachedPokemons = overResult.results.map(element => element.name);
 
-    pokeList = [...pokemonDic.keys()];
+        ids.forEach((pokemon, i) => {
+            pokemonDic.set(cachedPokemons[i], pokemon)
+        })
+
+        pokeList = [...pokemonDic.keys()];
+    }
+    catch (err) {
+        setErrorInfo(err.message, true);
+    }
 }
 
 const setupFooter = () => {
@@ -141,13 +161,17 @@ const upperCaseHelper = value => {
 }
 
 const searchWrap = (search) => {
+    if(searchInput_el.value.toLowerCase() === currentPokemon.toLowerCase()) return;
+   
     getPokemon(search);
     searchInput_el.value = upperCaseHelper(search)
     searchList_el.textContent = "";
+    currentPokemon = searchInput_el.value;
 }
 
 const searchChecks = () => {
     let searchValue = searchInput_el.value.toLowerCase().trim();
+
     if (cachedPokemons.includes(searchValue))
         searchWrap(searchValue);
     else if (pokemonDic.get(pokeList[searchValue - 1]))
@@ -207,9 +231,9 @@ const setupSearchAndEvents = () => {
             }
 
             searchList_el.children.item(currentHighlight).classList.remove('--active')
-            let quickCalc = currentHighlight - 1 < 0 ? 0 : currentHighlight - 1;
-            searchList_el.children.item(quickCalc).classList.add('--active');
-            searchInput_el.value = searchList_el.children.item(quickCalc).children.item(0).textContent;
+            let currentStep = currentHighlight - 1 < 0 ? 0 : currentHighlight - 1;
+            searchList_el.children.item(currentStep).classList.add('--active');
+            searchInput_el.value = searchList_el.children.item(currentStep).children.item(0).textContent;
         }
     })
 
@@ -226,6 +250,7 @@ const Init = () => {
     setupFooter();
     setupSearchAndEvents();
     getAllPokemons();
+    getPokemon("goomy");
 }
 
 const inputFiltering = () => {
@@ -265,6 +290,6 @@ const inputFiltering = () => {
 searchInput_el.addEventListener('input', () => inputFiltering());
 
 Init();
-getPokemon("goomy");
+
 
 

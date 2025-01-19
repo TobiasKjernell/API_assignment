@@ -15,7 +15,7 @@
         <img src="" alt="" class="header__logo">
         <div class="search">
             <div class="search-container">
-                <input type="text" class="search__input" placeholder="Pokémon name or ID">
+                <input type="text" class="search__input" placeholder="Pokémon name or ID (1025 Limit)">
                 <ul class="search__list">
                 </ul>
                 <button class="search__btn">Search</button>
@@ -23,6 +23,7 @@
         </div>
     </header>
     <main class="card__area">
+        <div class="error__info hidden"></div>
         <div class="card">
             <div class="card__stats--info">
                 <h2 class="grid__title">Stats</h2>
@@ -32,7 +33,6 @@
                     <h2 class="grid__title">Overall Info</h2>
                     <div class="information-grid">
                     </div>
-
                 </div>
             </div>
             <div class="card__visual--info">
@@ -40,14 +40,6 @@
                 </div>
                 <div class="area__location">
                     <div class="grid__title">Can be found in:</div>
-                    <div class="location__container">
-                        <div class="location__name">kalos-route-14-area</div>
-                        <div class="location__level-container">
-                            <div class="location__method">Method: Walk</div>
-                            <div class="location__level--min-max">Level 30-30</div>
-                           
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

@@ -251,3 +251,8 @@ body {
 .location__level--min-max {
     margin-left: auto;
 }
+
+.error__info{
+    font-size: 5rem;
+    color: var(--standard-text);
+}
