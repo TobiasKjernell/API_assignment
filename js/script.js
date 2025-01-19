@@ -41,14 +41,13 @@ const addImgAndName = (response, positionInsert) => {
 }
 
 const addRightInfo = (response, location) => {
-    console.log(location)
     addImgAndName(response, 'afterbegin')
     locationParent_el.textContent = "";
     locationParent_el.insertAdjacentHTML('beforeend', '<div class="grid__title">Can be found in:</div>');
 
     if (location.length === 0) {
-          locationParent_el.insertAdjacentHTML('beforeend', ` <div class="location__container"><div class="location__name">Upgraded Pokémon! Search for lowest version!</div>`);
-                       
+        locationParent_el.insertAdjacentHTML('beforeend', ` <div class="location__container"><div class="location__name">Upgraded Pokémon! Search for lowest version!</div>`);
+
         return;
     }
     location.forEach(zone => {
@@ -83,20 +82,31 @@ const addLeftInfo = (responseData) => {
 
 }
 
+const promiseHelper = (url, errorMsg = 'Something went wrong in api search') => {
+    return fetch(url).then(response => {
+        if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+        return response.json();
+    })
+}
+
 const getPokemon = async (id) => {
     try {
-        searchInputBtn_el.textContent = "..."
-        const response = await fetch(ENDPOINT + id);
-        const data = await response.json();
+        searchInputBtn_el.textContent = "...";
 
-        const responseArea = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`)
-        const dataArea = await responseArea.json();
+        //Pararell because i like when all card-info comes together and throws error if something happens.
+        let [pokemonInfo, locationInfo] = await Promise.all([
+            promiseHelper(ENDPOINT + id, 'Pokemon search went wrong'),
+            promiseHelper(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, 'Location search went wrong')
 
+        ]);
+        
+    
         statsGrid_el.textContent = "";
-        console.log(data);
+  
 
-        addLeftInfo(data);
-        addRightInfo(data, dataArea);
+        addLeftInfo(pokemonInfo);
+        addRightInfo(pokemonInfo, locationInfo);
         searchInputBtn_el.textContent = "Search";
 
     } catch (err) {
@@ -121,13 +131,9 @@ const getAllPokemons = async () => {
     pokeList = [...pokemonDic.keys()];
 }
 
-const getYear = () => {
-    let year = new Date();
-    return year.getFullYear();
-}
-
 const setupFooter = () => {
-    footer_el.children.item(0).textContent = `Made by Tobias Kjernell, ${getYear()}`;
+    let year = new Date();
+    footer_el.children.item(0).textContent = `Made by Tobias Kjernell, ${year.getFullYear()}`;
 }
 
 const upperCaseHelper = value => {
