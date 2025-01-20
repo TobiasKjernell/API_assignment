@@ -11,6 +11,7 @@ const footer_el = document.querySelector('.footer');
 const card_el = document.querySelector('.card');
 const errorInfo_el = document.querySelector('.error__info');
 const shinyImgParent = document.querySelector('.card__shiny-container--img');
+const colorThemeContainer_el = document.querySelector('.color__theme-container');
 const NUMBERCHECK = /^\d/;
 const pokemonDic = new Map();
 let cachedPokemons = "";
@@ -124,7 +125,7 @@ const upperCaseHelper = value => {
 const getPokemon = async (id) => {
     try {
         searchInputBtn_el.textContent = "...";
-      
+
         setErrorInfo("", false);
 
         //Pararell because i like when all card-info comes together and throws error if something happens.
@@ -187,6 +188,42 @@ const searchChecks = () => {
         searchWrap(searchValue);
     else if (pokemonDic.get(pokeList[searchValue - 1]))
         searchWrap(pokemonDic.get(pokeList[searchValue - 1]))
+}
+
+const setupColorThemeEvent = () => {
+    colorThemeContainer_el.addEventListener('click', (e) => {
+        const clicked = e.target.closest('.color__btn');
+
+        if (!clicked) return; { }
+
+
+        switch (clicked.dataset.theme) {
+            case "light":
+                document.documentElement.style.setProperty('--standard-text', '#333');
+                document.documentElement.style.setProperty('--base-background-color', '#ACDDDE');
+                document.documentElement.style.setProperty('--outline', '#777');
+                document.documentElement.style.setProperty('--base-hover','#94d8da');
+                document.documentElement.style.setProperty('--scroll-background', '#c1f9fa');
+                document.documentElement.style.setProperty('--place-holder', '#808080');
+                break;
+            case "dark":
+                document.documentElement.style.setProperty('--standard-text', '#fff');
+                document.documentElement.style.setProperty('--base-background-color', '#222');
+                document.documentElement.style.setProperty('--outline', '#a17a17');
+                document.documentElement.style.setProperty('--base-hover','#181818');
+                document.documentElement.style.setProperty('--scroll-background', '#2e2e2e');
+                document.documentElement.style.setProperty('--place-holder', '#808080');
+                break;
+            case "pokemon":
+                document.documentElement.style.setProperty('--standard-text', '#ffde00');
+                document.documentElement.style.setProperty('--base-background-color', '#cc0000');
+                document.documentElement.style.setProperty('--outline', '#fff');
+                document.documentElement.style.setProperty('--base-hover','#181818');
+                document.documentElement.style.setProperty('--scroll-background', '#ff0f0f');
+                document.documentElement.style.setProperty('--place-holder', '#ffde00');
+                break;
+        }
+    })
 }
 
 const setupSearchAndEvents = () => {
@@ -263,6 +300,7 @@ const createSearchItem = (id, pokemonName) => {
 const Init = () => {
     setupFooter();
     setupSearchAndEvents();
+    setupColorThemeEvent();
     getAllPokemonsNameAndID();
     getPokemon("nosepass");
 }

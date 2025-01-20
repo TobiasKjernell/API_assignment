@@ -1,7 +1,8 @@
 :root {
     --standard-text: #fff;
-    --outline: rgb(161, 122, 23);
+    --outline: #a17a17;
     --base-background-color: #222;
     --base-hover: #181818;;
     --scroll-background: #2e2e2e;
+    --place-holder: #808080;
 }

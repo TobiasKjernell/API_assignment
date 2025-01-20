@@ -109,14 +109,47 @@ body {
     background-color: var(--base-background-color);
     border-style: none;
     border: 1px solid var(--outline);
-    color: #fff;
+    color: var(--standard-text);
     border-radius: 5px;
+
+    &::placeholder {
+        color: var(--place-holder);
+    }
 
     &:focus {
         outline: none;
         border-bottom-left-radius: 0px;
         border-bottom-right-radius: 0px;
     }
+}
+
+.color__theme-container {
+    display: flex;
+    width: 12rem;
+    justify-content: space-around;
+}
+
+.color__btn {
+    height: 3rem;
+    width: 3rem;
+    cursor: pointer;
+    border: none;
+}
+
+.color__btn--light {
+    background: linear-gradient(#ACDDDE 0%, #ACDDDE 33%, #E1F8DC 33%, #E1F8DC 66%, #FEF8DD 66%, #FEF8DD 100%);
+}
+
+.color__btn--dark {
+    background: linear-gradient(#222 0%, #222 33%, #fff 33%, #fff 66%, #a17a17 66%, #a17a17 100%);
+}
+
+.color__btn--pokemon {
+    background: linear-gradient(#cc0000 0%, #cc0000 33%, #ffde00 33%, #ffde00 66%, #fff 66%, #fff 100%);
+}
+
+.card__btn--active {
+    border: 2px solid rgb(0, 255, 106);
 }
 
 .card__area {
@@ -283,7 +316,7 @@ body {
     }
 }
 
-.card__shiny--img{
+.card__shiny--img {
     width: 200px;
     height: auto;
 }
