@@ -125,7 +125,7 @@ body {
 
 .color__theme-container {
     display: flex;
-    width: 12rem;
+    width: 14rem;
     justify-content: space-around;
 }
 
@@ -134,10 +134,12 @@ body {
     width: 3rem;
     cursor: pointer;
     border: none;
+    transition: transform .2s;
+    border-radius: 50%;
 }
 
 .color__btn--light {
-    background: linear-gradient(#ACDDDE 0%, #ACDDDE 33%, #E1F8DC 33%, #E1F8DC 66%, #FEF8DD 66%, #FEF8DD 100%);
+    background: linear-gradient(#ACDDDE 0%, #ACDDDE 33%, #333 33%, #333 66%, #777 66%, #777 100%);
 }
 
 .color__btn--dark {
@@ -148,8 +150,9 @@ body {
     background: linear-gradient(#cc0000 0%, #cc0000 33%, #ffde00 33%, #ffde00 66%, #fff 66%, #fff 100%);
 }
 
-.card__btn--active {
-    border: 2px solid rgb(0, 255, 106);
+.color__btn--active {
+    border: 2px solid #ff9900;
+    transform: scale(1.6);
 }
 
 .card__area {

@@ -190,39 +190,50 @@ const searchChecks = () => {
         searchWrap(pokemonDic.get(pokeList[searchValue - 1]))
 }
 
+const setThemeColor = (themeButton) => {
+    themeButton.classList.add("color__btn--active");
+    switch (themeButton.dataset.theme) {
+        case "light":
+            document.documentElement.style.setProperty('--standard-text', '#333');
+            document.documentElement.style.setProperty('--base-background-color', '#ACDDDE');
+            document.documentElement.style.setProperty('--outline', '#777');
+            document.documentElement.style.setProperty('--base-hover', '#94d8da');
+            document.documentElement.style.setProperty('--scroll-background', '#c1f9fa');
+            document.documentElement.style.setProperty('--place-holder', '#808080');
+            break;
+        case "dark":
+            document.documentElement.style.setProperty('--standard-text', '#fff');
+            document.documentElement.style.setProperty('--base-background-color', '#222');
+            document.documentElement.style.setProperty('--outline', '#a17a17');
+            document.documentElement.style.setProperty('--base-hover', '#181818');
+            document.documentElement.style.setProperty('--scroll-background', '#2e2e2e');
+            document.documentElement.style.setProperty('--place-holder', '#808080');
+            break;
+        case "pokemon":
+            document.documentElement.style.setProperty('--standard-text', '#ffde00');
+            document.documentElement.style.setProperty('--base-background-color', '#cc0000');
+            document.documentElement.style.setProperty('--outline', '#fff');
+            document.documentElement.style.setProperty('--base-hover', '#181818');
+            document.documentElement.style.setProperty('--scroll-background', '#ff0f0f');
+            document.documentElement.style.setProperty('--place-holder', '#ffde00');
+            break;
+        default:
+            break;
+    }
+}
+
 const setupColorThemeEvent = () => {
     colorThemeContainer_el.addEventListener('click', (e) => {
         const clicked = e.target.closest('.color__btn');
 
+        for (const theme of colorThemeContainer_el.children) {
+            theme.classList.remove("color__btn--active");
+        }
+
         if (!clicked) return; { }
 
+        setThemeColor(clicked);
 
-        switch (clicked.dataset.theme) {
-            case "light":
-                document.documentElement.style.setProperty('--standard-text', '#333');
-                document.documentElement.style.setProperty('--base-background-color', '#ACDDDE');
-                document.documentElement.style.setProperty('--outline', '#777');
-                document.documentElement.style.setProperty('--base-hover','#94d8da');
-                document.documentElement.style.setProperty('--scroll-background', '#c1f9fa');
-                document.documentElement.style.setProperty('--place-holder', '#808080');
-                break;
-            case "dark":
-                document.documentElement.style.setProperty('--standard-text', '#fff');
-                document.documentElement.style.setProperty('--base-background-color', '#222');
-                document.documentElement.style.setProperty('--outline', '#a17a17');
-                document.documentElement.style.setProperty('--base-hover','#181818');
-                document.documentElement.style.setProperty('--scroll-background', '#2e2e2e');
-                document.documentElement.style.setProperty('--place-holder', '#808080');
-                break;
-            case "pokemon":
-                document.documentElement.style.setProperty('--standard-text', '#ffde00');
-                document.documentElement.style.setProperty('--base-background-color', '#cc0000');
-                document.documentElement.style.setProperty('--outline', '#fff');
-                document.documentElement.style.setProperty('--base-hover','#181818');
-                document.documentElement.style.setProperty('--scroll-background', '#ff0f0f');
-                document.documentElement.style.setProperty('--place-holder', '#ffde00');
-                break;
-        }
     })
 }
 
