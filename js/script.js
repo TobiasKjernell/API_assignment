@@ -134,7 +134,7 @@ const getPokemon = async (id) => {
             promiseHelper(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, 'Location search went wrong')
         ]);
 
-        console.log(pokemonInfo);
+        localStorage.setItem('pokemon', pokemonInfo.name);
         addLeftInfo(pokemonInfo);
         addRightInfo(pokemonInfo, locationInfo);
         searchInputBtn_el.textContent = "Search";
@@ -190,10 +190,17 @@ const searchChecks = () => {
         searchWrap(pokemonDic.get(pokeList[searchValue - 1]))
 }
 
-const setThemeColor = (themeButton) => {
-    themeButton.classList.add("color__btn--active");
-    switch (themeButton.dataset.theme) {
+const setThemeColor = (theme) => {
+
+    localStorage.setItem('theme', theme);
+
+    for (const theme of colorThemeContainer_el.children) {
+        theme.classList.remove("color__btn--active");
+    }
+
+    switch (theme) {
         case "light":
+            document.querySelector('.color__btn--light').classList.add('color__btn--active');
             document.documentElement.style.setProperty('--standard-text', '#333');
             document.documentElement.style.setProperty('--base-background-color', '#ACDDDE');
             document.documentElement.style.setProperty('--outline', '#777');
@@ -202,6 +209,7 @@ const setThemeColor = (themeButton) => {
             document.documentElement.style.setProperty('--place-holder', '#808080');
             break;
         case "dark":
+            document.querySelector('.color__btn--dark').classList.add('color__btn--active');
             document.documentElement.style.setProperty('--standard-text', '#fff');
             document.documentElement.style.setProperty('--base-background-color', '#222');
             document.documentElement.style.setProperty('--outline', '#a17a17');
@@ -210,6 +218,7 @@ const setThemeColor = (themeButton) => {
             document.documentElement.style.setProperty('--place-holder', '#808080');
             break;
         case "pokemon":
+            document.querySelector('.color__btn--pokemon').classList.add('color__btn--active');
             document.documentElement.style.setProperty('--standard-text', '#ffde00');
             document.documentElement.style.setProperty('--base-background-color', '#cc0000');
             document.documentElement.style.setProperty('--outline', '#fff');
@@ -226,13 +235,9 @@ const setupColorThemeEvent = () => {
     colorThemeContainer_el.addEventListener('click', (e) => {
         const clicked = e.target.closest('.color__btn');
 
-        for (const theme of colorThemeContainer_el.children) {
-            theme.classList.remove("color__btn--active");
-        }
-
         if (!clicked) return; { }
 
-        setThemeColor(clicked);
+        setThemeColor(clicked.dataset.theme);
 
     })
 }
@@ -308,12 +313,19 @@ const createSearchItem = (id, pokemonName) => {
         </li>`);
 }
 
+const loadLocalStorage = () => {
+    let savedThme = localStorage.getItem('theme') !== null ? localStorage.getItem('theme') : 'dark';
+    let savedPokemon = localStorage.getItem('pokemon') !== null ? localStorage.getItem('pokemon') : 'ekans';
+    setThemeColor(savedThme);
+    getPokemon(savedPokemon);
+}
+
 const Init = () => {
     setupFooter();
     setupSearchAndEvents();
     setupColorThemeEvent();
+    loadLocalStorage();
     getAllPokemonsNameAndID();
-    getPokemon("nosepass");
 }
 
 const inputFiltering = () => {
@@ -349,8 +361,6 @@ const inputFiltering = () => {
         }
     }
 }
-
-
 
 Init();
 
