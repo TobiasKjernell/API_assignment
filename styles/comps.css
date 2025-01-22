@@ -304,6 +304,8 @@
     color: var(--standard-text);
 }
 
+
+/* MEDIA */
 @media screen and (max-width:1200px) {
 
     .header__title {

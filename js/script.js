@@ -18,8 +18,8 @@ let cachedPokemons = "";
 let currentSearchList = [];
 let amountOfSearchItems = 15;
 let pokeList = [];
-let currentHighlight = 0;
-let previousHightlight = 0;
+let currentHighlightIndex = 0;
+let previousHightlightIndex = 0;
 let skip = false;
 let currentPokemon = "";
 
@@ -109,7 +109,7 @@ const setErrorInfo = (message, state) => {
     }
 }
 
-const promiseHelper = (url, errorMsg = 'Something went wrong in api search') => {
+const apiCall = (url, errorMsg = 'Something went wrong in api search') => {
     return fetch(url).then(response => {
         if (!response.ok) {
             throw new Error(`${errorMsg} (${response.status})`);
@@ -122,6 +122,9 @@ const upperCaseHelper = value => {
     return value[0].toUpperCase() + value.slice(1);
 }
 
+const mapValuesSearch = (map, val) => [...map.values()].includes(val)
+
+//APi Calls
 const getPokemon = async (id) => {
     try {
         searchInputBtn_el.textContent = "...";
@@ -130,8 +133,8 @@ const getPokemon = async (id) => {
 
         //Pararell because i like when all card-info comes together and throws error if something happens.
         let [pokemonInfo, locationInfo] = await Promise.all([
-            promiseHelper(`https://pokeapi.co/api/v2/pokemon/${id}/`, 'Pokemon search went wrong'),
-            promiseHelper(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, 'Location search went wrong')
+            apiCall(`https://pokeapi.co/api/v2/pokemon/${id}/`, 'Pokemon search went wrong'),
+            apiCall(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, 'Location search went wrong')
         ]);
 
         localStorage.setItem('pokemon', pokemonInfo.name);
@@ -144,9 +147,6 @@ const getPokemon = async (id) => {
     }
 }
 
-const mapValuesSearch = (map, val) => [...map.values()].includes(val)
-
-//Store/Cache once
 const getAllPokemonsNameAndID = async () => {
 
     try {
@@ -167,11 +167,8 @@ const getAllPokemonsNameAndID = async () => {
     }
 }
 
-const setupFooter = () => {
-    let year = new Date();
-    footer_el.children.item(0).textContent = `Made by Tobias Kjernell, ${year.getFullYear()}`;
-}
 
+//Search bar methods
 const searchWrap = (search) => {
     if (searchInput_el.value.toLowerCase() === currentPokemon.toLowerCase()) return;
 
@@ -179,6 +176,47 @@ const searchWrap = (search) => {
     searchInput_el.value = upperCaseHelper(search)
     searchList_el.textContent = "";
     currentPokemon = searchInput_el.value;
+}
+
+const inputFiltering = () => {
+    searchList_el.textContent = "";
+
+    currentSearchList = [];
+
+    const filterValue = searchInput_el.value.toLowerCase();
+    if (filterValue.length === 0) return;
+
+    currentHighlightIndex = 0;
+    if (!NUMBERCHECK.test(filterValue)) {
+
+        for (let index = 0; index < amountOfSearchItems; index++) {
+            for (const item of pokemonDic.keys()) {
+                const text = item.toLowerCase();
+                if (text.startsWith(filterValue) && !currentSearchList.includes(item)) {
+                    createSearchItem(pokemonDic.get(item), upperCaseHelper(item));
+                    currentSearchList.push(item);
+                    break;
+                }
+            }
+        }
+
+    } else if (NUMBERCHECK.test(filterValue)) {
+        const text = searchInput_el.value.toLowerCase().trim();
+
+        if (pokemonDic.get(pokeList[text - 1]) && !currentSearchList.includes(text)) {
+            let id = pokemonDic.get(pokeList[text - 1]);
+            let name = pokeList[text - 1][0].toUpperCase() + pokeList[text - 1].slice(1);
+            createSearchItem(id, name)
+            currentSearchList.push(text);
+        }
+    }
+}
+
+const createSearchItem = (id, pokemonName) => {
+    searchList_el.insertAdjacentHTML('beforeend', `<li class="search__item">
+        <p class="search__item--name">${pokemonName}</p>
+        <p class="search__item--id">ID: ${id}</p>
+        </li>`);
 }
 
 const searchChecks = () => {
@@ -190,6 +228,7 @@ const searchChecks = () => {
         searchWrap(pokemonDic.get(pokeList[searchValue - 1]))
 }
 
+//Themes
 const setThemeColor = (theme) => {
 
     localStorage.setItem('theme', theme);
@@ -242,6 +281,7 @@ const setupColorThemeEvent = () => {
     })
 }
 
+// Keyboard inputs
 const setupSearchAndEvents = () => {
 
     //Delegate hierarchy
@@ -275,30 +315,30 @@ const setupSearchAndEvents = () => {
         if (e.code === "ArrowDown" && searchList_el.childElementCount > 0) {
             e.preventDefault();
 
-            if (currentHighlight === searchList_el.childElementCount) return;
+            if (currentHighlightIndex === searchList_el.childElementCount) return;
 
-            searchList_el.children.item(currentHighlight - 1 < 0 ? 0 : currentHighlight - 1).classList.remove('--active')
-            searchList_el.children.item(currentHighlight).classList.add('--active');
-            searchInput_el.value = searchList_el.children.item(currentHighlight).children.item(0).textContent;
-            ++currentHighlight;
-            if (currentHighlight >= searchList_el.childElementCount)
-                currentHighlight = searchList_el.childElementCount;
+            searchList_el.children.item(currentHighlightIndex - 1 < 0 ? 0 : currentHighlightIndex - 1).classList.remove('--active')
+            searchList_el.children.item(currentHighlightIndex).classList.add('--active');
+            searchInput_el.value = searchList_el.children.item(currentHighlightIndex).children.item(0).textContent;
+            ++currentHighlightIndex;
+            if (currentHighlightIndex >= searchList_el.childElementCount)
+                currentHighlightIndex = searchList_el.childElementCount;
         }
     })
 
     //ArrowUp
     window.addEventListener('keydown', (e) => {
         if (e.code === "ArrowUp" && searchList_el.childElementCount > 0) {
-            --currentHighlight;
+            --currentHighlightIndex;
             e.preventDefault();
 
-            if (currentHighlight <= 0) {
-                currentHighlight = 1;
+            if (currentHighlightIndex <= 0) {
+                currentHighlightIndex = 1;
                 return;
             }
 
-            searchList_el.children.item(currentHighlight).classList.remove('--active')
-            let currentStep = currentHighlight - 1 < 0 ? 0 : currentHighlight - 1;
+            searchList_el.children.item(currentHighlightIndex).classList.remove('--active')
+            let currentStep = currentHighlightIndex - 1 < 0 ? 0 : currentHighlightIndex - 1;
             searchList_el.children.item(currentStep).classList.add('--active');
             searchInput_el.value = searchList_el.children.item(currentStep).children.item(0).textContent;
         }
@@ -306,11 +346,9 @@ const setupSearchAndEvents = () => {
 
 }
 
-const createSearchItem = (id, pokemonName) => {
-    searchList_el.insertAdjacentHTML('beforeend', `<li class="search__item">
-        <p class="search__item--name">${pokemonName}</p>
-        <p class="search__item--id">ID: ${id}</p>
-        </li>`);
+const setupFooter = () => {
+    let year = new Date();
+    footer_el.children.item(0).textContent = `Made by Tobias Kjernell, ${year.getFullYear()}`;
 }
 
 const loadLocalStorage = () => {
@@ -328,39 +366,7 @@ const Init = () => {
     getAllPokemonsNameAndID();
 }
 
-const inputFiltering = () => {
-    searchList_el.textContent = "";
 
-    currentSearchList = [];
-
-    const filterValue = searchInput_el.value.toLowerCase();
-    if (filterValue.length === 0) return;
-
-    currentHighlight = 0;
-    if (!NUMBERCHECK.test(filterValue)) {
-
-        for (let index = 0; index < amountOfSearchItems; index++) {
-            for (const item of pokemonDic.keys()) {
-                const text = item.toLowerCase();
-                if (text.startsWith(filterValue) && !currentSearchList.includes(item)) {
-                    createSearchItem(pokemonDic.get(item), upperCaseHelper(item));
-                    currentSearchList.push(item);
-                    break;
-                }
-            }
-        }
-
-    } else if (NUMBERCHECK.test(filterValue)) {
-        const text = searchInput_el.value.toLowerCase().trim();
-
-        if (pokemonDic.get(pokeList[text - 1]) && !currentSearchList.includes(text)) {
-            let id = pokemonDic.get(pokeList[text - 1]);
-            let name = pokeList[text - 1][0].toUpperCase() + pokeList[text - 1].slice(1);
-            createSearchItem(id, name)
-            currentSearchList.push(text);
-        }
-    }
-}
 
 Init();
 
