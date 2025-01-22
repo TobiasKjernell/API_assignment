@@ -193,7 +193,7 @@ const searchChecks = () => {
 const setThemeColor = (theme) => {
 
     localStorage.setItem('theme', theme);
-
+    let rootStyle = document.documentElement.style;
     for (const theme of colorThemeContainer_el.children) {
         theme.classList.remove("color__btn--active");
     }
@@ -201,30 +201,30 @@ const setThemeColor = (theme) => {
     switch (theme) {
         case "light":
             document.querySelector('.color__btn--light').classList.add('color__btn--active');
-            document.documentElement.style.setProperty('--standard-text', '#333');
-            document.documentElement.style.setProperty('--base-background-color', '#ACDDDE');
-            document.documentElement.style.setProperty('--outline', '#777');
-            document.documentElement.style.setProperty('--base-hover', '#94d8da');
-            document.documentElement.style.setProperty('--scroll-background', '#c1f9fa');
-            document.documentElement.style.setProperty('--place-holder', '#808080');
+            rootStyle.setProperty('--standard-text', '#333');
+            rootStyle.setProperty('--base-background-color', '#ACDDDE');
+            rootStyle.setProperty('--outline', '#777');
+            rootStyle.setProperty('--base-hover', '#94d8da');
+            rootStyle.setProperty('--scroll-background', '#c1f9fa');
+            rootStyle.setProperty('--place-holder', '#808080');
             break;
         case "dark":
             document.querySelector('.color__btn--dark').classList.add('color__btn--active');
-            document.documentElement.style.setProperty('--standard-text', '#fff');
-            document.documentElement.style.setProperty('--base-background-color', '#222');
-            document.documentElement.style.setProperty('--outline', '#a17a17');
-            document.documentElement.style.setProperty('--base-hover', '#181818');
-            document.documentElement.style.setProperty('--scroll-background', '#2e2e2e');
-            document.documentElement.style.setProperty('--place-holder', '#808080');
+            rootStyle.setProperty('--standard-text', '#fff');
+            rootStyle.setProperty('--base-background-color', '#222');
+            rootStyle.setProperty('--outline', '#a17a17');
+            rootStyle.setProperty('--base-hover', '#181818');
+            rootStyle.setProperty('--scroll-background', '#2e2e2e');
+            rootStyle.setProperty('--place-holder', '#808080');
             break;
         case "pokemon":
             document.querySelector('.color__btn--pokemon').classList.add('color__btn--active');
-            document.documentElement.style.setProperty('--standard-text', '#ffde00');
-            document.documentElement.style.setProperty('--base-background-color', '#cc0000');
-            document.documentElement.style.setProperty('--outline', '#fff');
-            document.documentElement.style.setProperty('--base-hover', '#181818');
-            document.documentElement.style.setProperty('--scroll-background', '#ff0f0f');
-            document.documentElement.style.setProperty('--place-holder', '#ffde00');
+            rootStyle.setProperty('--standard-text', '#ffde00');
+            rootStyle.setProperty('--base-background-color', '#cc0000');
+            rootStyle.setProperty('--outline', '#fff');
+            rootStyle.setProperty('--base-hover', '#181818');
+            rootStyle.setProperty('--scroll-background', '#ff0f0f');
+            rootStyle.setProperty('--place-holder', '#ffde00');
             break;
         default:
             break;
