@@ -1,0 +1,15 @@
+After doing traditionel "XMLHttpRequest" for two days just to understand the 'beginning' (another project)
+of JS API calls, i felt the pain of callback hell. Good to know how it worked back in the day, but never again.
+
+Another day on next version of fetches (fetch/cath/finally). Still abit wonky since it's a fancier way of callback hell.
+You can still get some structure with it but if you going to nest or chain it all, you will have to get some help methods just to clean it up abit.
+
+After it, I refactored it with new async/await (todays). Checked-up how Promise class worked and deep dived down into it for a day. Did various testing on performance and tried different ideas how to keep it clean. 
+
+Took my knownledge and used it for this project/assignment.
+
+I still like Flex over Grids, might need to use 'grids' more to get some practice with it. I feel fast on flex 'designing' in head but need to more time with 'grids'.
+
+After spending alot of time with Array methods, im surely can use them more when needed. I hope i can more of them in further assignments, especially when working with currency.
+
+I might check more into Map and Sets. Sets seems to be extremly fast when iterating large amount. 
