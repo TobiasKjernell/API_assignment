@@ -10,17 +10,17 @@ const locationParent_el = document.querySelector('.area__location')
 const footer_el = document.querySelector('.footer');
 const card_el = document.querySelector('.card');
 const errorInfo_el = document.querySelector('.error__info');
-const shinyImgParent = document.querySelector('.card__shiny-container--img');
+const shinyImgParent_el = document.querySelector('.card__shiny-container--img');
 const colorThemeContainer_el = document.querySelector('.color__theme-container');
 const NUMBERCHECK = /^\d/;
 const pokemonDic = new Map();
+
 let cachedPokemons = "";
 let currentSearchList = [];
 let amountOfSearchItems = 15;
 let pokeList = [];
 let currentHighlightIndex = 0;
 let previousHightlightIndex = 0;
-let skip = false;
 let currentPokemon = "";
 
 const addToGrid = (statsValue, statsType, grid, positionInsert) => {
@@ -41,7 +41,6 @@ const addToGrid = (statsValue, statsType, grid, positionInsert) => {
 
 
 const addRightInfo = (response, location) => {
-
     imgAndNameParent_el.textContent = "";
     imgAndNameParent_el.insertAdjacentHTML('beforeend', `<div class="pokemon__name">${upperCaseHelper(response.name)}</div>
     <img src="${response.sprites.front_default}" alt="åicture of the pokemon: ${response.name}" class="card__img" height="200px" width="200px">`)
@@ -52,9 +51,9 @@ const addRightInfo = (response, location) => {
 
     if (location.length === 0) {
         locationParent_el.insertAdjacentHTML('beforeend', ` <div class="location__container"><div class="location__name">Upgraded Pokémon! Search for lowest version!</div>`);
-
         return;
     }
+
     location.forEach(zone => {
         locationParent_el.insertAdjacentHTML('beforeend', ` <div class="location__container"><div class="location__name">${upperCaseHelper(zone.location_area.name)}</div>
                             <div class="location__level-container">
@@ -76,19 +75,14 @@ const addLeftInfo = (responseData) => {
     addToGrid(responseData.species.name, "species", infoGrid_el, 'beforeend');
 
     if (responseData.types.length > 1)
-        responseData.types.forEach((factionType, i) => {
-            addToGrid(factionType.type.name, "type " + (i + 1), infoGrid_el, 'beforeend');
-        });
-    else {
+        responseData.types.forEach((factionType, i) => addToGrid(factionType.type.name, "type " + (i + 1), infoGrid_el, 'beforeend'));
+    else
         addToGrid(responseData.types[0]?.type.name, "type", infoGrid_el, 'beforeend');
-    }
 
-    responseData.stats.forEach(statsData => {
-        addToGrid(statsData.base_stat, statsData.stat.name, statsGrid_el, 'beforeend');
-    });
+    responseData.stats.forEach(statsData => addToGrid(statsData.base_stat, statsData.stat.name, statsGrid_el, 'beforeend'));
 
-    shinyImgParent.textContent = "";
-    shinyImgParent.insertAdjacentHTML('beforeend', `      <img class="card__shiny--img"
+    shinyImgParent_el.textContent = "";
+    shinyImgParent_el.insertAdjacentHTML('beforeend', `      <img class="card__shiny--img"
                             src="${responseData.sprites.front_shiny ?? ""}"
                             alt="">
                         <img class="card__shiny--img"
@@ -230,9 +224,9 @@ const searchChecks = () => {
 
 //Themes
 const setThemeColor = (theme) => {
-
     localStorage.setItem('theme', theme);
     let rootStyle = document.documentElement.style;
+
     for (const theme of colorThemeContainer_el.children) {
         theme.classList.remove("color__btn--active");
     }
@@ -365,8 +359,6 @@ const Init = () => {
     loadLocalStorage();
     getAllPokemonsNameAndID();
 }
-
-
 
 Init();
 
